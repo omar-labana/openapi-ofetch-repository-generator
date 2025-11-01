@@ -45,8 +45,8 @@ class Normalize {
     return params?.map((param) => `${param.name}: string | number`).join(', ');
   }
 
-  argumentQuery(operationId?: string) {
-    if (!operationId) {
+  argumentQuery(operation: NormalizedOperation) {
+    if (!operation.operationId || !operation.parameters || operation.parameters.length === 0) {
       return 'query: Record<string, unknown>';
     }
     // return `query: { ${
@@ -55,7 +55,7 @@ class Normalize {
     //   ).join('; ')
     // } }`;
 
-    return `query: ${operationId}Params`;
+    return `query: ${operation.operationId}Params`;
   }
 
   argumentBody(operation: NormalizedOperation) {
@@ -69,7 +69,7 @@ class Normalize {
 
   functionArguments(operation: NormalizedOperation) {
     let argumentId = this.argumentId(operation.parameters);
-    let argumentQuery = this.argumentQuery(operation.operationId);
+    let argumentQuery = this.argumentQuery(operation);
     let argumentBody = this.argumentBody(operation);
     // ${operation.method === 'get' ? 'query' : 'body'}: ${operation.payload}
     return argumentId + (argumentId && (argumentQuery || argumentBody) ? ', ' : '') +
