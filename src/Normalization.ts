@@ -45,16 +45,17 @@ class Normalize {
     return params?.map((param) => `${param.name}: string | number`).join(', ');
   }
 
-  argumentQuery(operation: Operation['parameters']) {
-    const params = operation?.filter((param) => param.in === 'query');
-    if (!params || params.length === 0) {
-      return 'query: undefined';
+  argumentQuery(operationId?: string) {
+    if (!operationId) {
+      return 'query: Record<string, unknown>';
     }
-    return `query: { ${
-      params.map((param) =>
-        `${param.name}${param.schema.nullable ? '?' : ''}: ${this.normalizeType(param)}`
-      ).join('; ')
-    } }`;
+    // return `query: { ${
+    //   params.map((param) =>
+    //     `${param.name}${param.schema.nullable ? '?' : ''}: ${this.normalizeType(param)}`
+    //   ).join('; ')
+    // } }`;
+
+    return `query: ${operationId}Params`;
   }
 
   argumentBody(operation: NormalizedOperation) {
@@ -68,7 +69,7 @@ class Normalize {
 
   functionArguments(operation: NormalizedOperation) {
     let argumentId = this.argumentId(operation.parameters);
-    let argumentQuery = this.argumentQuery(operation.parameters);
+    let argumentQuery = this.argumentQuery(operation.operationId);
     let argumentBody = this.argumentBody(operation);
     // ${operation.method === 'get' ? 'query' : 'body'}: ${operation.payload}
     return argumentId + (argumentId && (argumentQuery || argumentBody) ? ', ' : '') +
