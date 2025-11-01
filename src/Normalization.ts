@@ -45,6 +45,16 @@ class Normalize {
     return params?.map((param) => `${param.name}: string | number`).join(', ');
   }
 
+  adjustPascalNormalized(name: string) {
+    const pascal = pascalCase(name, { normalize: true });
+    // if in name there was 'G2G', make sure it stays 'G2G' in pascal case, there can be multiple occurrences
+    if (name.includes('G2G')) {
+      return pascal.replace(/G2g/g, 'G2G');
+    }
+
+    return pascal;
+  }
+
   argumentQuery(operation: NormalizedOperation) {
     if (!operation.operationId || !operation.parameters || operation.parameters.length === 0) {
       return 'query: Record<string, unknown>';
@@ -55,7 +65,7 @@ class Normalize {
     //   ).join('; ')
     // } }`;
 
-    return `query: ${operation.operationId}Params`;
+    return `query: ${this.adjustPascalNormalized(operation.operationId)}Params`;
   }
 
   argumentBody(operation: NormalizedOperation) {
