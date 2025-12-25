@@ -1,18 +1,26 @@
+/**
+ * TypeScript interfaces for OpenAPI/Swagger document structure
+ * These interfaces represent the subset of OpenAPI 3.0 specification used by this generator
+ */
+
 export type XGenerator = string;
 
 export type OpenAPIVersion = '3.0.0';
 
+/** Metadata about the API */
 export interface Info {
   title: string;
   version: string;
 }
 
+/** Server configuration */
 export interface Server {
   url: string;
 }
 
 export type Servers = Server[];
 
+/** HTTP methods supported by the generator */
 export type HttpMethod =
   | 'get'
   | 'post'
@@ -24,6 +32,7 @@ export type HttpMethod =
   | 'trace'
   | 'connect';
 
+/** OpenAPI operation (endpoint) definition */
 export interface Operation {
   tags?: string[];
   summary?: string;
@@ -67,8 +76,10 @@ export interface Operation {
 
 export type Path = Record<HttpMethod, Operation>;
 
+/** Collection of API paths */
 export type Paths = Record<string, Path>;
 
+/** Root OpenAPI document structure */
 export interface Document {
   'x-generator': XGenerator;
   openapi: OpenAPIVersion;
@@ -77,6 +88,7 @@ export interface Document {
   paths: Paths;
 }
 
+/** Normalized operation used for code generation */
 export interface NormalizedOperation {
   method: HttpMethod;
   path: string;
@@ -90,6 +102,7 @@ export interface NormalizedOperation {
   requestBody?: Operation['requestBody'];
 }
 
+/** Collection of normalized operations for a repository */
 export interface Normalized {
   repository: string;
   operations: NormalizedOperation[];

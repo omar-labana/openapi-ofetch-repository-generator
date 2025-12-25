@@ -1,6 +1,10 @@
 import { runMain } from 'citty';
 import Main from '@/Main.ts';
-// Learn more at https://docs.deno.com/runtime/manual/examples/module_metadata#concepts
+
+/**
+ * OpenAPI ofetch Repository Generator
+ * Entry point for the CLI application
+ */
 if (import.meta.main) {
   const main = new Main();
 
