@@ -5,7 +5,8 @@
 
 export type XGenerator = string;
 
-export type OpenAPIVersion = '3.0.0';
+/** OpenAPI 3.0.x version string */
+export type OpenAPIVersion = `3.0.${number}`;
 
 /** Metadata about the API */
 export interface Info {

@@ -41,7 +41,9 @@ class Fetcher {
       throw new ValidationError('Invalid OpenAPI document: missing "openapi" field');
     }
 
-    if (!doc.openapi.startsWith('3.0')) {
+    // Validate OpenAPI version format (3.0.x)
+    const versionRegex = /^3\.0\.\d+$/;
+    if (!versionRegex.test(doc.openapi)) {
       throw new ValidationError(
         `Unsupported OpenAPI version: ${doc.openapi}. Only OpenAPI 3.0.x is supported`,
       );

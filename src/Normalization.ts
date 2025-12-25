@@ -94,11 +94,6 @@ class Normalize {
     if (!operation.operationId || !operation.parameters || operation.parameters.length === 0) {
       return 'query: Record<string, unknown>';
     }
-    // return `query: { ${
-    //   params.map((param) =>
-    //     `${param.name}${param.schema.nullable ? '?' : ''}: ${this.normalizeType(param)}`
-    //   ).join('; ')
-    // } }`;
 
     return `query: ${this.adjustPascalNormalized(operation.operationId)}Params`;
   }
@@ -158,14 +153,27 @@ class Normalize {
       finale = 'string';
     } else if (something.schema.type === 'boolean') {
       finale = 'boolean';
-    } else if (something.schema.type === 'array' && something.schema.items) {
-      if (something.schema.items.type === 'integer') {
+    } else if (something.schema.type === 'array') {
+      if (!something.schema.items) {
+        // Array type without items definition - use unknown[]
+        finale = 'unknown[]';
+      } else if (something.schema.items.type === 'integer') {
         finale = 'number[]';
       } else if (something.schema.items.$ref) {
         finale =
           something.schema.items.$ref.replace('#/components/schemas/', '').replace(/_/g, '') + '[]';
+      } else if (something.schema.items.type === 'string') {
+        finale = 'string[]';
+      } else if (something.schema.items.type === 'boolean') {
+        finale = 'boolean[]';
       } else {
-        this.seto.add(JSON.stringify(something.schema.items));
+        // Log unhandled item schema for debugging
+        const itemsInfo = {
+          paramName: something.name,
+          itemsSchema: something.schema.items,
+        };
+        this.seto.add(JSON.stringify(itemsInfo));
+        finale = 'unknown[]';
       }
     } else if (something.schema.oneOf && Array.isArray(something.schema.oneOf)) {
       // Handle oneOf with $ref
