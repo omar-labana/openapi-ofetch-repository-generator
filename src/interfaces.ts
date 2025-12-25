@@ -94,3 +94,27 @@ export interface Normalized {
   repository: string;
   operations: NormalizedOperation[];
 }
+
+/**
+ * Custom error types for better error handling
+ */
+export class ValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ValidationError';
+  }
+}
+
+export class FetchError extends Error {
+  constructor(message: string, public cause?: unknown) {
+    super(message);
+    this.name = 'FetchError';
+  }
+}
+
+export class FileSystemError extends Error {
+  constructor(message: string, public cause?: unknown) {
+    super(message);
+    this.name = 'FileSystemError';
+  }
+}

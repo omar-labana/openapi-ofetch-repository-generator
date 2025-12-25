@@ -4,6 +4,9 @@ import Fetcher from '@/Fetcher.ts';
 import FileSystemInteraction from '@/FileSystemInteraction.ts';
 import Generator from '@/Generator.ts';
 
+/**
+ * Sequence class orchestrates the entire generation workflow
+ */
 class Sequence {
   document?: Document;
   fetcher: Fetcher;
@@ -16,6 +19,14 @@ class Sequence {
     this.generator = new Generator();
   }
 
+  /**
+   * Starts the complete generation sequence
+   * - Validates the URL
+   * - Fetches the OpenAPI document
+   * - Prepares the generator
+   * - Prepares the file system
+   * - Generates repository files
+   */
   async start() {
     try {
       consola.start(`Parsing Swagger file from ${this.fetcher.url}`);
