@@ -111,9 +111,9 @@ class Generator {
       const constFunctions = normalized.operations.map((operation) => {
         return `const ${operation.function} = (${
           this.normalize.functionArguments(operation)
-        }) => factoryFetch<${operation.returns || 'unknown'}>(${
+        }, options?: FetchOptions) => factoryFetch<${operation.returns || 'unknown'}>(${
           this.normalize.endpoint(operation.path)
-        }, { ${
+        }, {...options, ${
           operation.method === 'get' ? 'query' : 'body'
         },\nmethod: '${operation.method}'})\n\n`;
       }).join('');
