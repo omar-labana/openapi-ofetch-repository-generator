@@ -9,6 +9,7 @@ const tribute: string[] = [
   ' ** @source: https://github.com/omar-labana/ez **\n',
   ' ** ------------------------------------------ **\n',
   ' */\n\n',
+  `import type { FetchOptions } from 'ofetch';\n\n`,
 ];
 
 const fetchInstance = 'const factoryFetch = useFactoryFetch();\n';
