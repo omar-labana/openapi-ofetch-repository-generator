@@ -2,6 +2,7 @@ import { Document, HttpMethod, Normalized, Paths } from '@/interfaces.ts';
 import Normalize from '@/Normalization.ts';
 import FileSystemInteraction from './FileSystemInteraction.ts';
 
+/** Attribution comment included in generated files */
 const tribute: string[] = [
   '/*\n',
   ' ** ------------------------------------------ **\n',
@@ -14,6 +15,9 @@ const tribute: string[] = [
 
 const fetchInstance = 'const factoryFetch = useFactoryFetch();\n';
 
+/**
+ * Generator class responsible for organizing operations by tags and generating repository files
+ */
 class Generator {
   normalize: Normalize;
   fileSystemInteraction: FileSystemInteraction;
@@ -24,9 +28,12 @@ class Generator {
     this.fileSystemInteraction = new FileSystemInteraction();
   }
 
+  /**
+   * Prepares the generator by organizing OpenAPI operations by tags
+   * @param {Document} document - The OpenAPI document to process
+   */
   prepare(document: Document) {
     for (const [path, pathItem] of Object.entries(document.paths)) {
-      // console.log(Object.values(pathItem));
       for (const operation of Object.values(pathItem)) {
         const operationId = operation.operationId;
         // Check if operationId already exists in any of the map's arrays
@@ -55,14 +62,13 @@ class Generator {
         }
       }
     }
-
-    // /inbox/{id}
-    // for (const [tag, paths] of this.map) {
-    //   paths.sort((a, b) => Object.keys(a)[0].localeCompare(Object.keys(b)[0]));
-    //   this.map.set(tag, paths);
-    // }
   }
 
+  /**
+   * Conserves (converts) operations for a specific tag into normalized format
+   * @param {string} tag - The tag name to process
+   * @returns {Normalized} Normalized operations and repository name
+   */
   conserve(tag: string): Normalized {
     const nameRepository = this.normalize.nameRepository(tag);
     const normalized: Normalized = {
@@ -75,7 +81,6 @@ class Generator {
       const [key, value] = Object.entries(pathObj)[0];
 
       for (const [operationKey, operationValue] of Object.entries(value)) {
-        // console.log(operationKey, key);
         normalized.operations.push({
           method: operationKey as HttpMethod,
           path: key,
@@ -103,6 +108,9 @@ class Generator {
     return normalized;
   }
 
+  /**
+   * Generates all repository files from the prepared operations
+   */
   generate() {
     for (const tag of this.map.keys()) {
       const normalized = this.conserve(tag);
@@ -124,8 +132,6 @@ class Generator {
         }).join('')
       }}`;
 
-      // console.log(constFunctions);
-
       const functionDefinition =
         `const ${normalized.repository} = () => {\n  ${fetchInstance}\n${constFunctions}\nreturn ${returnValue}\n};\n\nexport default ${normalized.repository};\n`;
 
@@ -134,7 +140,6 @@ class Generator {
         start + functionDefinition,
       );
     }
-    console.log(this.normalize.seto);
   }
 }
 

@@ -1,13 +1,20 @@
 import { defineCommand } from "citty";
 import Sequence from "@/Sequence.ts";
 
+/**
+ * Main class that defines and configures the CLI application
+ */
 class Main {
+  /**
+   * Creates and returns the CLI command definition
+   * @returns {CommandDef} The CLI command configuration
+   */
   cli() {
     return defineCommand({
       meta: {
-        name: "easy",
+        name: "openapi-ofetch-gen",
         version: "0.1.0",
-        description: "Easy Swagger Parser",
+        description: "Generate TypeScript repositories from OpenAPI/Swagger specifications",
       },
       args: {
         url: {
