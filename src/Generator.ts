@@ -109,13 +109,19 @@ class Generator {
       const start = tribute.join('');
 
       const constFunctions = normalized.operations.map((operation) => {
-        return `const ${operation.function} = (${
-          this.normalize.functionArguments(operation)
-        }, options?: FetchOptions) => factoryFetch<${operation.returns || 'unknown'}>(${
-          this.normalize.endpoint(operation.path)
-        }, {...options, ${
-          operation.method === 'get' ? 'query' : 'body'
-        },\nmethod: '${operation.method}'})\n\n`;
+        const bodyArgument = this.normalize.argumentBody(operation);
+        const functionArguments = [
+          this.normalize.functionArguments(operation),
+          'options?: FetchOptions',
+        ].filter(Boolean).join(', ');
+        const fetchOptions = [
+          '...options',
+          operation.method === 'get' ? 'query' : bodyArgument ? 'body' : '',
+          `method: '${operation.method}'`,
+        ].filter(Boolean).join(',\n');
+        return `const ${operation.function} = (${functionArguments}) => factoryFetch<${
+          operation.returns || 'unknown'
+        }>(${this.normalize.endpoint(operation.path)}, {${fetchOptions}})\n\n`;
       }).join('');
 
       const returnValue = `{\n${

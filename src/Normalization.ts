@@ -69,21 +69,18 @@ class Normalize {
   }
 
   argumentBody(operation: NormalizedOperation) {
-    return `body: ${
-      operation.requestBody?.content?.['application/json']?.schema?.$ref?.replace(
-        '#/components/schemas/',
-        '',
-      ) || 'undefined'
-    }`;
+    const schema = operation.requestBody?.content?.['application/json']?.schema?.$ref?.replace(
+      '#/components/schemas/',
+      '',
+    );
+    return schema ? `body: ${schema}` : '';
   }
 
   functionArguments(operation: NormalizedOperation) {
-    let argumentId = this.argumentId(operation.parameters);
-    let argumentQuery = this.argumentQuery(operation);
-    let argumentBody = this.argumentBody(operation);
-    // ${operation.method === 'get' ? 'query' : 'body'}: ${operation.payload}
-    return argumentId + (argumentId && (argumentQuery || argumentBody) ? ', ' : '') +
-      (operation.method === 'get' ? argumentQuery : argumentBody);
+    const requestArgument = operation.method === 'get'
+      ? this.argumentQuery(operation)
+      : this.argumentBody(operation);
+    return [this.argumentId(operation.parameters), requestArgument].filter(Boolean).join(', ');
   }
 
   normalizeType(something: {
